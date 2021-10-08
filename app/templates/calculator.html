@@ -1,0 +1,53 @@
+<html lang="en">
+  <head>
+    <title>Calculator</title>
+
+  </head>
+  <body>
+    <div class="container">
+      <h1>Calculator</h1>
+    </div>
+    <div class="container">
+      <form action="/send" method="POST">
+        <label for="Number One">First Number</label>
+        <input
+          type="text"
+          placeholder="First Number"
+          class="u-full-width"
+          name="num1"
+        />
+
+        <label for="Number Two">Second Number</label>
+        <input
+          type="text"
+          placeholder="Second Number"
+          class="u-full-width"
+          name="num2"
+        />
+
+        <label for="Operation">Start or Exit</label>
+        <select class="u-full-width" name="operation">
+          <option value="start">start</option>
+          <option value="exit">exit</option>
+
+        </select>
+
+        <input type="submit" value="Calculate" id="calc_btn" />
+        <br />
+        <div class="alert">
+          <p>
+          </p>
+        <label> Addition </label>  {{ sum }} <p>
+        </p>
+        <label> subtract </label>   {{ sum1 }}<p>
+        </p>
+        <label> multiply </label>   {{ sum2 }}<p>
+        </p>
+        <label> Divide </label>   {{ sum3 }}<p>
+        </p>
+
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

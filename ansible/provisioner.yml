@@ -1,0 +1,71 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Updating the apt
+      apt: update_cache=yes
+
+    - name: Install aptitude
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+    - name: Install Required Packages for Docker
+      apt: name={{ item }} state=latest update_cache=yes force_apt_get=yes
+      loop: ['apt-transport-https' , 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+
+    - name: Adding GPG Key for Docker
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Adding Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Updating the apt
+      apt: update_cache=yes
+
+    - name: Installing Docker-ce
+      apt: name=docker-ce state=latest
+
+    - name: Installing a python package for docker
+      pip:
+        name: docker
+
+
+    - name: adding the current user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Copy Cert Directory to the server
+      copy:
+        src: "{{ playbook_dir }}/../cert"
+        dest: /home/ubuntu/
+        owner: ubuntu
+        group: ubuntu
+        mode: 0400
+
+    - name: Creating secure_rest_api container
+      docker_container:
+        name: secure_rest_api_container
+        image: zakk96/secure_rest_api
+        state: started
+        container_default_behavior: compatibility
+        published_ports:
+          - "5000:5000"
+        volumes:
+          - /home/ubuntu/cert:/cert
+
+    - name: Pulling a Doker Image
+      docker_image:
+        name: hello-world
+        source: pull
+
+    - name: Starting a Docker Image
+      docker_container:
+       name: hello_world_container_1
+       image: hello-world
+       state: started
